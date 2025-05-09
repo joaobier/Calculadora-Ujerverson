@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <!-- Linking CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="square-box">
+                <div class="titulo"><h1>CALCULADORA</h1></div>
+                <input type="text" class="equation-input" placeholder="f(x)">
+                <div class="buttons">
+                    <button class="botaoD">Calcular</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resultado-container">
+            <div class="resultado">
+                <div class="result-item derivative-result">
+                    <div class="result-label">Derivada:</div>
+                    <div class="derivative-value"></div>
+                </div>
+                <div class="result-item integral-result">
+                    <div class="result-label">Integral:</div>
+                    <div class="integral-value"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
