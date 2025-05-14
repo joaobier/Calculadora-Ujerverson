@@ -1,20 +1,24 @@
-// Math calculation functions
-
 function calculateDerivative(equation) {
-    // Add your derivative calculation logic here
     
-    return '0'; // Derivative of a constant
+    const result = math.sqrt(equation);
+    return result; 
 }
 
 function calculateIntegral(equation) {
-    // Add your integrative calculation logic here
 
-    return 0;
+    const result = math.sqrt(equation);
+    return result;
 }
 
 function formatter(userinput){
-
     
+    console.log(userinput);
+
+    const result = math.parse(userinput);
+    
+    console.log(result);
+
+    return input;
 
 }
 
