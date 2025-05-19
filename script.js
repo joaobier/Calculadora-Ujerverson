@@ -30,6 +30,27 @@ function calculateSecondDerivative(equation) {
     }
 }
 
+function calculateDefiniteIntegral(equation, lowerBound, upperBound) {
+    try {
+            // 1. Calcula a integral indefinida
+            const integralExpr = Algebrite.run(`integral(${equation})`);
+
+            // 2. Avalia F(b)
+            const upper = Algebrite.run(`float(subst(x=${upperBound}, ${integralExpr}))`);
+
+            // 3. Avalia F(a)
+            const lower = Algebrite.run(`float(subst(x=${lowerBound}, ${integralExpr}))`);
+
+            // 4. Faz F(b) - F(a)
+            const result = Algebrite.run(`${upper} - (${lower})`);
+            
+            // 5. Simplifica resultado
+            return Algebrite.run(`float(${result})`);
+        } catch (error) {
+            return `Erro: ${error.message}`;
+    }
+}
+
 function calculateIntegral(equation) {
 
     try {
@@ -77,27 +98,65 @@ function clearResults() {
 document.addEventListener('DOMContentLoaded', function() {
     const calculateBtn = document.querySelector('.botaoD');
     const equationInput = document.querySelector('.equation-input');
+    const lowerBoundInput = document.querySelector('#lower-bound');
+    const upperBoundInput = document.querySelector('#upper-bound');
+    const calculateIntegralBtn = document.querySelector('.calculate-integral-bounds');
     
     calculateBtn.addEventListener('click', function() {
         const equation = formatter(equationInput.value.trim());
-        
+        const lowerBound = parseFloat(lowerBoundInput.value);
+        const upperBound = parseFloat(upperBoundInput.value);
+        const definiteResultContainer = document.querySelector('.definite-integral-result');
+        const definiteValueBox = document.querySelector('.definite-integral-value');
+
+        // Clear all previous results including the definite integral
+        clearResults();
+        definiteResultContainer.style.display = 'none';
+        definiteValueBox.textContent = '';
+
         if (!equation) {
             displayResults('Por favor insira uma equação', '', 'Por favor insira uma equação');
             return;
         }
-        
+
         try {
             const derivative = calculateDerivative(equation);
             const secondDerivative = calculateSecondDerivative(equation);
             const integral = calculateIntegral(equation);
-            
+
             displayResults(
                 `d/dx(${equation}) = ${derivative}`,
                 `d²/dx²(${equation}) = ${secondDerivative}`,
                 `∫(${equation})dx = ${integral}`
             );
+
+            // If both bounds are numbers, calculate definite integral
+            if (!isNaN(lowerBound) && !isNaN(upperBound)) {
+                const result = calculateDefiniteIntegral(equation, lowerBound, upperBound);
+                definiteValueBox.textContent = `∫(${equation})dx de ${lowerBound} até ${upperBound} = ${result}`;
+                definiteResultContainer.style.display = 'flex';
+            }
+
         } catch (error) {
             displayResults('Erro no cálculo', 'Erro no cálculo', error.message);
+        }
+    });
+    
+    calculateIntegralBtn.addEventListener('click', function() {
+        const equation = formatter(equationInput.value.trim());
+        const lowerBound = parseFloat(lowerBoundInput.value);
+        const upperBound = parseFloat(upperBoundInput.value);
+        
+        if (!equation || isNaN(lowerBound) || isNaN(upperBound)) {
+            document.querySelector('.integral-bounds-value').textContent = 'Por favor insira uma equação e os limites.';
+            return;
+        }
+        
+        try {
+            const result = calculateDefiniteIntegral(equation, lowerBound, upperBound);
+            document.querySelector('.integral-bounds-value').textContent = `Resultado: ${result}`;
+        } catch (error) {
+            document.querySelector('.integral-bounds-value').textContent = 'Erro no cálculo';
         }
     });
     
