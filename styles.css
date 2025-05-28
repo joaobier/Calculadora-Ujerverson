@@ -8,6 +8,9 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://wallpapercave.com/wp/wp2598965.jpg') no-repeat center center fixed;
+    background-size: cover;
     margin: 0;
     min-height: 100vh;
 }
