@@ -17,7 +17,7 @@ function calculateDerivative(equation) {
 function calculateSecondDerivative(equation) {
 
     try {
-
+        
         const expr = math.parse(equation);
         const firstDerivative = math.derivative(expr, 'x');
         const secondDerivative = math.derivative(firstDerivative, 'x');
@@ -32,31 +32,30 @@ function calculateSecondDerivative(equation) {
 
 function calculateDefiniteIntegral(equation, lowerBound, upperBound) {
     try {
-            // 1. Calcula a integral indefinida
-            const integralExpr = Algebrite.run(`integral(${equation})`);
+        
+        let result;
+        console.log("--------------------------------------------------")
+        console.log(`Calculando a integral definida na equação ${equation} de ${lowerBound} até ${upperBound}`);
+        result = Algebrite.eval(`defint(${equation}, x, ${lowerBound}, ${upperBound})`).toString();
+        console.log("E o resultado foi: " + result);
+        console.log("--------------------------------------------------")
 
-            // 2. Avalia F(b)
-            const upper = Algebrite.run(`float(subst(x=${upperBound}, ${integralExpr}))`);
+        return result;
 
-            // 3. Avalia F(a)
-            const lower = Algebrite.run(`float(subst(x=${lowerBound}, ${integralExpr}))`);
-
-            // 4. Faz F(b) - F(a)
-            const result = Algebrite.run(`${upper} - (${lower})`);
-            
-            // 5. Simplifica resultado
-            return Algebrite.run(`float(${result})`);
-        } catch (error) {
-            return `Erro: ${error.message}`;
+    } catch (error) {
+        return `Erro: ${error.message}`;
     }
 }
 
 function calculateIntegral(equation) {
 
     try {
-
-        console.log(equation);
+        console.log("--------------------------------------------------")
+        console.log("Equação que vamos fazer a integral: " + equation);
         const result = Algebrite.integral(equation).toString();
+        console.log("E o resultado foi: " + result);
+        console.log("--------------------------------------------------")
+
         return result + ' + C';
 
     } catch (error) {
@@ -73,6 +72,21 @@ function formatter(userinput){
     return userinput.replace(/√\s*(\d+(\.\d+)?|\w+)/g, 'sqrt($1)').replace(/([\w\)\]])\s*²/g, '$1^2').replace(/([\w\)\]])\s*³/g, '$1^3'); 
                                // √9 => sqrt(9)                                 // x² => x^2                        //√x => sqrt(x)
          
+}
+
+function formatterAlgebrite(userinput) {
+    return userinput
+        // Handle square roots: √x → sqrt(x)
+        .replace(/√\s*(\d+|x)/g, 'sqrt($1)')
+        // Handle exponents: x² → x^2, x³ → x^3
+        .replace(/([x\d\)])\s*²/g, '$1^2')
+        .replace(/([x\d\)])\s*³/g, '$1^3')
+        // Add * between numbers and variables: 9x → 9*x, 2( → 2*(
+        .replace(/(\d)(\(|[a-zA-Z])/g, '$1*$2')
+        // Add * between variables and numbers: x4 → x*4 (rare but possible)
+        .replace(/([a-zA-Z])(\d)/g, '$1*$2')
+        // Add * between fractions and variables: 1/4x → 1/4*x
+        .replace(/(\/)(\s*)([a-zA-Z])/g, '$1*$3');
 }
 
 // DOM manipulation functions
@@ -104,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     calculateBtn.addEventListener('click', function() {
         const equation = formatter(equationInput.value.trim());
+        const equationAlgebrite = formatterAlgebrite(equationInput.value.trim());
         const lowerBound = parseFloat(lowerBoundInput.value);
         const upperBound = parseFloat(upperBoundInput.value);
         const definiteResultContainer = document.querySelector('.definite-integral-result');
@@ -132,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // If both bounds are numbers, calculate definite integral
             if (!isNaN(lowerBound) && !isNaN(upperBound)) {
-                const result = calculateDefiniteIntegral(equation, lowerBound, upperBound);
+                const result = calculateDefiniteIntegral(equationAlgebrite, lowerBound, upperBound);
                 definiteValueBox.textContent = `∫(${equation})dx de ${lowerBound} até ${upperBound} = ${result}`;
                 definiteResultContainer.style.display = 'flex';
             }
